@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/bloc/user_bloc.dart';
+import 'package:task_app/src/helpers/alerts.dart';
+import 'package:task_app/src/helpers/network_validator.dart';
+import 'package:task_app/src/helpers/validations_fields.dart';
+import 'package:task_app/src/pages/home_page.dart';
 import 'package:task_app/src/pages/register_page.dart';
 import 'package:task_app/src/widgets/container_fields_auth.dart';
-import 'package:task_app/src/widgets/custom_text_field.dart';
+import 'package:task_app/src/widgets/auth_text_field.dart';
 import 'package:task_app/src/widgets/painters/login_painter.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
   static const String routeName = "LoginPage";
+
+  final ctrlEmail = TextEditingController();
+  final ctrlPassword = TextEditingController();
+  final focusPassword = FocusNode();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -29,7 +38,11 @@ class LoginPage extends StatelessWidget {
                 bottom: size.height * 0.15,
                 child: const RegisterLabel(),
               ),
-              const FormLogin()
+              FormLogin(
+                ctrlEmail: ctrlEmail,
+                ctrlPassword: ctrlPassword,
+                focusPassword: focusPassword,
+              )
             ],
           ),
         ),
@@ -80,8 +93,16 @@ class RegisterLabel extends StatelessWidget {
 }
 
 class FormLogin extends StatelessWidget {
-  const FormLogin({Key? key}) : super(key: key);
+  const FormLogin({
+    Key? key,
+    required this.ctrlEmail,
+    required this.ctrlPassword,
+    required this.focusPassword,
+  }) : super(key: key);
 
+  final TextEditingController ctrlEmail;
+  final TextEditingController ctrlPassword;
+  final FocusNode focusPassword;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -102,23 +123,28 @@ class FormLogin extends StatelessWidget {
           SizedBox(height: size.height * .08),
           ContainerFieldsAuth(
             fields: [
-              const CustomTextField(
+              AuthTextField(
                 hintText: 'Email',
+                controller: ctrlEmail,
                 prefixIcon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
+                onSubmitted: (_) => focusPassword.requestFocus(),
               ),
               Container(
                 width: size.width,
                 color: Colors.grey.withOpacity(0.5),
                 height: 1,
               ),
-              const CustomTextField(
+              AuthTextField(
                 obscureText: true,
+                controller: ctrlPassword,
                 hintText: 'Password',
                 prefixIcon: Icons.lock,
+                focusNode: focusPassword,
+                onSubmitted: (_) => onSubmitLogin(context),
               ),
             ],
-            onSubmit: () {},
+            onSubmit: () => onSubmitLogin(context),
             submitIconData: Icons.arrow_forward,
           ),
           const SizedBox(height: 10),
@@ -134,5 +160,42 @@ class FormLogin extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  onSubmitLogin(BuildContext context) async {
+    String email = ctrlEmail.value.text;
+    String password = ctrlPassword.value.text;
+    //Validate fields
+    String? errorText = ValidationsFields().validateFields([
+      Field(typeField: TypeField.email, value: email, fieldName: 'email'),
+      Field(
+          typeField: TypeField.password,
+          value: password,
+          fieldName: 'password'),
+    ]);
+    if (errorText != null) {
+      return showMessageAlert(
+        context: context,
+        title: 'Verify',
+        message: errorText,
+      );
+    }
+    if (!await NewtworkValidator.checkNetworkAndAlert(context)) return;
+
+    showLoadingAlert(context);
+    final response = await UserBloc().login(
+      email: email,
+      password: password,
+    );
+    Navigator.pop(context);
+    if (!response.ok) {
+      return showMessageAlert(
+        context: context,
+        title: 'Failure',
+        message: response.msg,
+      );
+    } else {
+      Navigator.pushReplacementNamed(context, HomePage.routeName);
+    }
   }
 }

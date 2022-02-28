@@ -18,6 +18,7 @@ Future showMessageAlert({
   required BuildContext context,
   required String title,
   required String message,
+  VoidCallback? onOk,
 }) async {
   showDialog(
     barrierDismissible: false,
@@ -28,7 +29,7 @@ Future showMessageAlert({
           title: Text(title),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => onOk != null ? onOk() : Navigator.pop(context),
                 child: const Text(
                   'OK',
                   style: TextStyle(color: Colors.black),

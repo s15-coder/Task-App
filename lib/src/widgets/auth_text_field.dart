@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
-  const CustomTextField({
+class AuthTextField extends StatelessWidget {
+  const AuthTextField({
     Key? key,
     required this.hintText,
     required this.prefixIcon,
     this.obscureText = false,
     this.keyboardType,
     this.controller,
+    this.textCapitalization = TextCapitalization.none,
+    this.focusNode,
+    this.onSubmitted,
   }) : super(key: key);
   final String hintText;
   final IconData prefixIcon;
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextEditingController? controller;
+  final TextCapitalization textCapitalization;
+  final FocusNode? focusNode;
+  final void Function(String)? onSubmitted;
   @override
   Widget build(BuildContext context) {
     return TextField(
+      focusNode: focusNode,
+      onSubmitted: onSubmitted,
+      textCapitalization: textCapitalization,
       style: const TextStyle(fontSize: 19),
       controller: controller,
       obscureText: obscureText,

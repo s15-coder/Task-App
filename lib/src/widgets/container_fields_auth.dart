@@ -42,10 +42,10 @@ class ContainerFieldsAuth extends StatelessWidget {
               offset: const Offset(25, 0),
               child: GestureDetector(
                 onTap: onSubmit,
-                child: const CircleAvatar(
+                child:  CircleAvatar(
                   maxRadius: 30,
                   child: Icon(
-                    Icons.arrow_forward,
+                    submitIconData,
                     color: Colors.white,
                   ),
                   backgroundColor: Colors.lightGreen,

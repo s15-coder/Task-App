@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/bloc/user_bloc.dart';
 import 'package:task_app/src/helpers/alerts.dart';
-import 'package:task_app/src/helpers/validations.dart';
+import 'package:task_app/src/helpers/validations_fields.dart';
 import 'package:task_app/src/pages/login_page.dart';
-import 'package:task_app/src/services/auth_service.dart';
 import 'package:task_app/src/widgets/container_fields_auth.dart';
-import 'package:task_app/src/widgets/custom_text_field.dart';
+import 'package:task_app/src/widgets/auth_text_field.dart';
 import 'package:task_app/src/widgets/painters/login_painter.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  RegisterPage({Key? key}) : super(key: key);
   static const String routeName = "RegisterPage";
+
+  final ctrlEmail = TextEditingController();
+  final ctrlPassword = TextEditingController();
+  final ctrlName = TextEditingController();
+
+  final FocusNode emailFocus = FocusNode();
+  final FocusNode passwordFocus = FocusNode();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: SizedBox(
           height: size.height,
           width: size.width,
@@ -33,7 +41,13 @@ class RegisterPage extends StatelessWidget {
                 top: size.height * 0.15,
                 child: const LoginLabel(),
               ),
-              FormRegister()
+              FormRegister(
+                ctrlEmail: ctrlEmail,
+                ctrlPassword: ctrlPassword,
+                ctrlName: ctrlName,
+                emailFocus: emailFocus,
+                passwordFocus: passwordFocus,
+              )
             ],
           ),
         ),
@@ -83,11 +97,20 @@ class LoginLabel extends StatelessWidget {
 }
 
 class FormRegister extends StatelessWidget {
-  FormRegister({Key? key}) : super(key: key);
+  const FormRegister({
+    Key? key,
+    required this.ctrlEmail,
+    required this.ctrlPassword,
+    required this.ctrlName,
+    required this.emailFocus,
+    required this.passwordFocus,
+  }) : super(key: key);
 
-  final ctrlEmail = TextEditingController();
-  final ctrlName = TextEditingController();
-  final ctrlPassword = TextEditingController();
+  final TextEditingController ctrlEmail;
+  final TextEditingController ctrlPassword;
+  final TextEditingController ctrlName;
+  final FocusNode emailFocus;
+  final FocusNode passwordFocus;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -108,37 +131,48 @@ class FormRegister extends StatelessWidget {
           const SizedBox(height: 30),
           ContainerFieldsAuth(
             fields: [
-              CustomTextField(
+              AuthTextField(
                 hintText: 'Name',
+                textCapitalization: TextCapitalization.words,
                 controller: ctrlName,
                 prefixIcon: Icons.person_pin_circle_outlined,
                 keyboardType: TextInputType.name,
+                onSubmitted: (value) {
+                  emailFocus.requestFocus();
+                },
               ),
               Container(
                 width: size.width,
                 color: Colors.grey.withOpacity(0.5),
                 height: 1,
               ),
-              CustomTextField(
+              AuthTextField(
                 hintText: 'Email',
+                textCapitalization: TextCapitalization.sentences,
                 controller: ctrlEmail,
                 prefixIcon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
+                focusNode: emailFocus,
+                onSubmitted: (value) {
+                  passwordFocus.requestFocus();
+                },
               ),
               Container(
                 width: size.width,
                 color: Colors.grey.withOpacity(0.5),
                 height: 1,
               ),
-              CustomTextField(
+              AuthTextField(
                 obscureText: true,
                 hintText: 'Password',
                 controller: ctrlPassword,
                 prefixIcon: Icons.lock,
+                focusNode: passwordFocus,
+                onSubmitted: (value) => onSubmitRegister(context),
               ),
             ],
             onSubmit: () => onSubmitRegister(context),
-            submitIconData: Icons.arrow_forward,
+            submitIconData: Icons.check,
           )
         ],
       ),
@@ -150,17 +184,46 @@ class FormRegister extends StatelessWidget {
     String email = ctrlEmail.value.text;
     String password = ctrlPassword.value.text;
     //Validate fields
-    String? errorText = Validations().validateFields([
-      Field(typeField: TypeField.email, value: email),
-      Field(typeField: TypeField.name, value: name),
-      Field(typeField: TypeField.password, value: password),
+    String? errorText = ValidationsFields().validateFields([
+      Field(typeField: TypeField.name, value: name, fieldName: 'name'),
+      Field(typeField: TypeField.email, value: email, fieldName: 'email'),
+      Field(
+          typeField: TypeField.password,
+          value: password,
+          fieldName: 'password'),
     ]);
     if (errorText != null) {
       return showMessageAlert(
-          context: context, title: 'Verify', message: errorText);
+        context: context,
+        title: 'Verify',
+        message: errorText,
+      );
     }
     showLoadingAlert(context);
-    await AuthService().register(email, password, name);
+    final response = await UserBloc().register(
+      email: email,
+      password: password,
+      name: name,
+    );
     Navigator.pop(context);
+
+    if (!response.ok) {
+      return showMessageAlert(
+        context: context,
+        title: 'Failure',
+        message: response.msg,
+      );
+    } else {
+      return showMessageAlert(
+          context: context,
+          title: 'Success',
+          message: "Successfully registered",
+          onOk: () {
+            //Close alert
+            Navigator.pop(context);
+            //Change page
+            Navigator.pushReplacementNamed(context, LoginPage.routeName);
+          });
+    }
   }
 }

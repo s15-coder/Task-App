@@ -1,13 +1,32 @@
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:task_app/src/global/consts.dart';
+import 'package:task_app/src/models/responses/generic_response.dart';
+import 'package:task_app/src/models/responses/login_response.dart';
 
 class AuthService {
-  Future login(
-    String email,
-    String password,
-  ) async {}
-  Future register(
-    String email,
-    String password,
-    String name,
-  ) async {}
+  Future<LoginResponse> login({
+    required String email,
+    required String password,
+  }) async {
+    final response = await http.post(Uri.parse('$host/auth/signin'), body: {
+      "password": password,
+      "email": email,
+    });
+    final responseParsed = loginResponseFromJson(response.body);
+    return responseParsed;
+  }
+
+  Future<GenericResponse> register({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    final response = await http.post(Uri.parse('$host/auth/signup'), body: {
+      'name': name,
+      "password": password,
+      "email": email,
+    });
+    final responseParsed = genericResponseFromJson(response.body);
+    return responseParsed;
+  }
 }
