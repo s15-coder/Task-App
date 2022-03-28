@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/theme/custom_color_scheme.dart';
 
 class CardContainer extends StatelessWidget {
   const CardContainer({
@@ -11,18 +12,19 @@ class CardContainer extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.colorTaskCard,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               blurRadius: 15,
               spreadRadius: 10,
-              color: Colors.grey[200]!,
+              color: Theme.of(context).shadowColor,
             )
           ]),
-      margin: EdgeInsets.symmetric(
-        horizontal: size.width * 0.05,
-        vertical: 30,
+      margin: EdgeInsets.only(
+        right: size.width * 0.05,
+        left: size.width * 0.05,
+        top: 30,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: size.width * 0.05,

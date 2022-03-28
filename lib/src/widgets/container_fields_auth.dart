@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/theme/custom_color_scheme.dart';
 
 class ContainerFieldsAuth extends StatelessWidget {
   const ContainerFieldsAuth({
@@ -21,7 +22,7 @@ class ContainerFieldsAuth extends StatelessWidget {
           topRight: Radius.circular(100),
           bottomRight: Radius.circular(100),
         ),
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.colorTaskCard,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -42,13 +43,13 @@ class ContainerFieldsAuth extends StatelessWidget {
               offset: const Offset(25, 0),
               child: GestureDetector(
                 onTap: onSubmit,
-                child:  CircleAvatar(
+                child: CircleAvatar(
                   maxRadius: 30,
                   child: Icon(
                     submitIconData,
                     color: Colors.white,
                   ),
-                  backgroundColor: Colors.lightGreen,
+                  backgroundColor: Theme.of(context).primaryColor,
                 ),
               ),
             ),

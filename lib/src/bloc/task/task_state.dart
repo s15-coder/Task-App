@@ -1,24 +1,18 @@
 part of 'task_bloc.dart';
 
-class TaskStateBloc extends Equatable {
-  const TaskStateBloc({
-    this.tasks = const [],
-    this.loading = false,
-  });
+class TaskState extends Equatable {
+  const TaskState(
+      {this.tasks = const [], this.loading = false, this.typeTaskFilter = ''});
   final List<Task> tasks;
   final bool loading;
-
-  TaskStateBloc copyWith({
-    List<Task>? tasks,
-    bool? loading,
-  }) =>
-      TaskStateBloc(
+  final String typeTaskFilter;
+  TaskState copyWith(
+          {List<Task>? tasks, bool? loading, String? typeTaskFilter}) =>
+      TaskState(
         tasks: tasks ?? this.tasks,
         loading: loading ?? this.loading,
+        typeTaskFilter: typeTaskFilter ?? this.typeTaskFilter,
       );
   @override
-  List<Object> get props => [
-        tasks,
-        loading,
-      ];
+  List<Object?> get props => [tasks, loading, typeTaskFilter];
 }

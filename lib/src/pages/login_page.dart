@@ -7,6 +7,7 @@ import 'package:task_app/src/pages/home_page.dart';
 import 'package:task_app/src/pages/register_page.dart';
 import 'package:task_app/src/widgets/container_fields_auth.dart';
 import 'package:task_app/src/widgets/auth_text_field.dart';
+import 'package:task_app/src/widgets/left_banner.dart';
 import 'package:task_app/src/widgets/painters/login_painter.dart';
 
 class LoginPage extends StatelessWidget {
@@ -27,7 +28,7 @@ class LoginPage extends StatelessWidget {
           child: Stack(
             children: [
               CustomPaint(
-                painter: LoginPainter(),
+                painter: LoginPainter(context),
                 child: const SizedBox(
                   height: double.infinity,
                   width: double.infinity,
@@ -36,7 +37,11 @@ class LoginPage extends StatelessWidget {
               Positioned(
                 left: 0,
                 bottom: size.height * 0.15,
-                child: const RegisterLabel(),
+                child: LeftBanner(
+                  label: 'Regiser',
+                  onTap: () => Navigator.pushReplacementNamed(
+                      context, RegisterPage.routeName),
+                ),
               ),
               FormLogin(
                 ctrlEmail: ctrlEmail,
@@ -44,47 +49,6 @@ class LoginPage extends StatelessWidget {
                 focusPassword: focusPassword,
               )
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class RegisterLabel extends StatelessWidget {
-  const RegisterLabel({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () =>
-          Navigator.pushReplacementNamed(context, RegisterPage.routeName),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 15,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                blurRadius: 10,
-                spreadRadius: 1,
-                offset: const Offset(-2, 0)),
-          ],
-        ),
-        child: const Text(
-          'Register',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.lightGreen,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),

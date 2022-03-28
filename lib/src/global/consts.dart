@@ -5,7 +5,7 @@ enum Enviroment { development, production }
 
 const host = "http://10.0.2.2:3000";
 
-final defaultTasksTypes = [
+const defaultTasksTypes = [
   TaskType(
     nameState: "To Do",
     colorState: Colors.red,

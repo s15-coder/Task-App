@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:task_app/src/global/consts.dart';
+import 'package:task_app/src/models/responses/generic_response.dart';
 import 'package:task_app/src/models/responses/get_tasks_response.dart';
 import 'package:task_app/src/models/responses/save_task_response.dart';
 import 'package:task_app/src/models/task.dart';
@@ -23,10 +24,36 @@ class TaskService {
         body: {
           "description": newTask.description,
           "name": newTask.name,
-          "state": newTask.state!.nameState,
+          "state": newTask.state.nameState,
         });
 
     final saveTaskResponse = saveTaskResponseFromJson(response.body);
     return saveTaskResponse;
+  }
+
+  Future<GenericResponse> updateTask(Task task) async {
+    final response = await http.put(
+      Uri.parse('$host/task/update-task/?task_id=${task.id}'),
+      headers: await _headers(),
+      body: {
+        "description": task.description,
+        "name": task.name,
+        "state": task.state.nameState,
+      },
+    );
+
+    final genericResponse = genericResponseFromJson(response.body);
+    return genericResponse;
+  }
+
+  Future<GenericResponse> deleteTask(String taskId) async {
+    final response = await http.delete(Uri.parse('$host/task/delete-task'),
+        headers: await _headers(),
+        body: {
+          "task_id": taskId,
+        });
+
+    final genericResponse = genericResponseFromJson(response.body);
+    return genericResponse;
   }
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:task_app/src/bloc/task/task_bloc.dart';
+import 'package:task_app/src/bloc/theme/theme_bloc.dart';
 import 'package:task_app/src/bloc/user_bloc.dart';
+import 'package:task_app/src/models/user_hive.dart';
 import 'package:task_app/src/pages/login_page.dart';
 import 'package:task_app/src/resources/db_hive.dart';
 import 'package:task_app/src/widgets/card_container.dart';
+import 'package:task_app/src/widgets/right_banner.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -14,17 +18,17 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: Tooltip(
-        message: "Log Out",
-        child: FloatingActionButton(
-          onPressed: () async {
-            final taskBloc = BlocProvider.of<TaskBloc>(context);
-            await UserBloc().logOut(taskBloc);
-            Navigator.pushReplacementNamed(context, LoginPage.routeName);
-          },
-          child: const Icon(Icons.logout),
-        ),
-      ),
+      // floatingActionButton: Tooltip(
+      //   message: "Log Out",
+      //   child: FloatingActionButton(
+      //     onPressed: () async {
+      //       final taskBloc = BlocProvider.of<TaskBloc>(context);
+      //       await UserBloc().logOut(taskBloc);
+      //       Navigator.pushReplacementNamed(context, LoginPage.routeName);
+      //     },
+      //     child: const Icon(Icons.logout),
+      //   ),
+      // ),
       appBar: AppBar(
         title: const Text('Profile'),
         centerTitle: true,
@@ -32,51 +36,120 @@ class ProfilePage extends StatelessWidget {
       body: SizedBox(
         height: size.height,
         width: size.width,
-        child: Center(
-          child: Container(
-            margin: EdgeInsets.only(top: size.height * 0.1),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: CardContainer(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 25),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ProfileProperty(
-                            keyString: 'Name',
-                            value: user.name,
-                          ),
-                          const Divider(),
-                          ProfileProperty(
-                            keyString: 'Email',
-                            value: user.email,
-                          ),
-                        ],
+        child: Stack(
+          children: [
+            ProfileInfo(user: user),
+            Positioned(
+              bottom: size.height * 0.25,
+              right: 0,
+              child: BlocBuilder<ThemeBloc, ThemeState>(
+                builder: (context, state) {
+                  return RightBanner(
+                    prefixBanner: Container(
+                      child: const Icon(
+                        FontAwesomeIcons.sun,
+                        color: Colors.green,
                       ),
+                      margin: const EdgeInsets.only(right: 6),
                     ),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: const CircleAvatar(
-                    maxRadius: 50,
-                  ),
-                ),
-              ],
+                    label: state.themeMode == ThemeMode.dark ? 'Light' : 'dark',
+                    onTap: () => BlocProvider.of<ThemeBloc>(context)
+                        .toogleTheme(context),
+                  );
+                },
+              ),
             ),
-          ),
+            Positioned(
+              bottom: size.height * 0.15,
+              right: 0,
+              child: RightBanner(
+                label: 'Sign Off',
+                onTap: () async {
+                  final taskBloc = BlocProvider.of<TaskBloc>(context);
+                  await UserBloc().logOut(taskBloc);
+                  Navigator.pushReplacementNamed(context, LoginPage.routeName);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class ProfileProperty extends StatelessWidget {
-  const ProfileProperty({
+class ProfileInfo extends StatelessWidget {
+  const ProfileInfo({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
+  final User user;
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only(top: size.height * 0.1),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 25),
+              child: CardContainer(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 25),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _ProfileProperty(
+                        keyString: 'Name',
+                        value: user.name,
+                      ),
+                      const Divider(),
+                      _ProfileProperty(
+                        keyString: 'Email',
+                        value: user.email,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.topCenter,
+              child: CircleAvatar(
+                backgroundColor: Colors.green,
+                maxRadius: 50,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    height: 90,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).backgroundColor,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Transform.translate(
+                      offset: const Offset(-15, -10),
+                      child: Icon(
+                        Icons.person,
+                        size: 120,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileProperty extends StatelessWidget {
+  const _ProfileProperty({
     Key? key,
     required this.keyString,
     required this.value,

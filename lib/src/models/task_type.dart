@@ -5,7 +5,7 @@ class TaskType {
   final String nameState;
   final Color colorState;
 
-  TaskType({
+  const TaskType({
     required this.nameState,
     required this.colorState,
   });

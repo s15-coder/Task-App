@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 class LoginPainter extends CustomPainter {
+  final BuildContext context;
+
+  LoginPainter(this.context);
+
   @override
   void paint(Canvas canvas, Size size) {
     drawFigureUp(canvas, size);
-    final pen = Paint()..color = Colors.lightGreen;
+    final pen = Paint()..color = Theme.of(context).primaryColor;
     final path = Path();
     path.moveTo(size.width * 0.05, size.height);
     path.quadraticBezierTo(

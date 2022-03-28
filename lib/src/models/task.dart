@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:task_app/src/models/task_type.dart';
 
 class Task {
   Task({
-    this.state,
+    this.state = const TaskType(colorState: Colors.green, nameState: ""),
     this.name = '',
     this.description = '',
     this.createdAt,
@@ -10,7 +11,7 @@ class Task {
     this.id = '',
   });
 
-  TaskType? state;
+  TaskType state;
   String name;
   String description;
   DateTime? createdAt;

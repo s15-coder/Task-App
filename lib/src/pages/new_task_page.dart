@@ -8,6 +8,7 @@ import 'package:task_app/src/helpers/alerts.dart';
 import 'package:task_app/src/helpers/validations_fields.dart';
 import 'package:task_app/src/models/task.dart';
 import 'package:task_app/src/models/task_type.dart';
+import 'package:task_app/src/pages/home_page.dart';
 import 'package:task_app/src/widgets/card_container.dart';
 import 'package:task_app/src/widgets/custom_field.dart';
 
@@ -21,17 +22,32 @@ class NewTaskPage extends StatefulWidget {
 
 class _NewTaskPageState extends State<NewTaskPage> {
   final ctrlNameTask = TextEditingController();
-
   final ctrlDescriptionTask = TextEditingController();
-
   final focusNodeDesc = FocusNode();
 
+  late final bool edit;
+
   final _formKey = GlobalKey<FormState>();
+
+  late final TaskBloc taskBloc;
   @override
   void initState() {
-    final taskBloc = BlocProvider.of<TaskBloc>(context);
-    taskBloc.add(ResetNewTaskState());
     super.initState();
+    taskBloc = BlocProvider.of<TaskBloc>(context);
+    taskBloc.add(ResetNewTaskTypeEvent());
+    final editTask = taskBloc.editTask;
+    edit = editTask != null;
+    if (edit) {
+      taskBloc.add(UpdateNewTaskTypeEvent(editTask!.state));
+      ctrlNameTask.text = editTask.name;
+      ctrlDescriptionTask.text = editTask.description;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    taskBloc.editTask = null;
   }
 
   @override
@@ -80,7 +96,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                 const Divider(),
                 const _CustomDropDownBottom(),
                 const Divider(),
-                SaveButton(
+                SaveUpdateButton(
+                  label: edit ? "Edit" : "Save",
                   onPressed: () async {
                     //Validate text fields.
                     final validFields = _formKey.currentState!.validate();
@@ -100,22 +117,13 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       name: ctrlNameTask.value.text,
                       description: ctrlDescriptionTask.value.text,
                       id: '',
-                      state: taskBloc.taskState,
+                      state: taskBloc.taskState!,
                     );
-                    showLoadingAlert(context);
-                    final response = await taskBloc.saveTask(newTask);
-                    Navigator.pop(context);
-                    return showMessageAlert(
-                        context: context,
-                        title: response.ok ? 'Success' : 'Error',
-                        message: response.msg,
-                        onOk: () {
-                          Navigator.pop(context);
-                          if (response.ok) {
-                            //Close page
-                            Navigator.pop(context);
-                          }
-                        });
+                    if (edit) {
+                      await onEdit(newTask);
+                    } else {
+                      await onSave(newTask);
+                    }
                   },
                 )
               ],
@@ -126,7 +134,55 @@ class _NewTaskPageState extends State<NewTaskPage> {
     );
   }
 
-  Future onSave() async {}
+  Future onSave(Task newTask) async {
+    showLoadingAlert(context);
+    final response = await taskBloc.saveTask(newTask);
+    Navigator.pop(context);
+    if (response.ok) {
+      return showMessageAlert(
+          context: context,
+          title: 'Success',
+          message: response.msg,
+          closeOnBackArrow: false,
+          onOk: () {
+            //Close alert
+            Navigator.pop(context);
+            //Close page
+            Navigator.pop(context);
+          });
+    }
+    return showMessageAlert(
+      context: context,
+      title: 'Error',
+      message: response.msg,
+    );
+  }
+
+  Future onEdit(Task task) async {
+    task.id = taskBloc.editTask!.id;
+    showLoadingAlert(context);
+    final response = await taskBloc.updateTask(task);
+    Navigator.pop(context);
+    if (response.ok) {
+      return showMessageAlert(
+          context: context,
+          title: 'Success',
+          message: response.msg,
+          closeOnBackArrow: false,
+          onOk: () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              HomePage.routeName,
+              (route) => false,
+            );
+          });
+    }
+    return showMessageAlert(
+      context: context,
+      title: 'Error',
+      message: response.msg,
+    );
+  }
 }
 
 class _CustomDropDownBottom extends StatelessWidget {
@@ -134,7 +190,9 @@ class _CustomDropDownBottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField2(
+    final taskBloc = BlocProvider.of<TaskBloc>(context);
+    return DropdownButtonFormField2<TaskType?>(
+      value: taskBloc.editTask != null ? taskBloc.editTask!.state : null,
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.zero,
@@ -174,7 +232,7 @@ class _CustomDropDownBottom extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       items: defaultTasksTypes
-          .map((taskState) => DropdownMenuItem<TaskType>(
+          .map((taskState) => DropdownMenuItem<TaskType?>(
                 value: taskState,
                 child: Row(
                   children: [
@@ -198,7 +256,7 @@ class _CustomDropDownBottom extends StatelessWidget {
         if (value == null) return;
         final taskBloc = BlocProvider.of<TaskBloc>(context);
         return taskBloc.add(
-          UpdateNewTaskState(
+          UpdateNewTaskTypeEvent(
             value as TaskType,
           ),
         );
@@ -207,9 +265,12 @@ class _CustomDropDownBottom extends StatelessWidget {
   }
 }
 
-class SaveButton extends StatelessWidget {
-  const SaveButton({Key? key, required this.onPressed}) : super(key: key);
+class SaveUpdateButton extends StatelessWidget {
+  const SaveUpdateButton(
+      {Key? key, required this.onPressed, required this.label})
+      : super(key: key);
   final void Function()? onPressed;
+  final String label;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -223,9 +284,9 @@ class SaveButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: const Text(
-        'Save',
-        style: TextStyle(
+      child: Text(
+        label,
+        style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),

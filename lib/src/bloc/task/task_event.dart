@@ -7,22 +7,28 @@ abstract class TaskEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AddTasks extends TaskEvent {
+class AddTasksEvent extends TaskEvent {
   final List<Task> tasks;
 
-  const AddTasks(this.tasks);
+  const AddTasksEvent(this.tasks);
 }
 
-class StartFetchingTasks extends TaskEvent {}
+class StartFetchingTasksEvent extends TaskEvent {}
 
-class StopFetchingTasks extends TaskEvent {}
+class StopFetchingTasksEvent extends TaskEvent {}
 
-class UpdateNewTaskState extends TaskEvent {
-  final TaskType taskStateModel;
-
-  const UpdateNewTaskState(this.taskStateModel);
+class UpdateNewTaskTypeEvent extends TaskEvent {
+  final TaskType taskTypeModel;
+  const UpdateNewTaskTypeEvent(this.taskTypeModel);
 }
 
-class ResetNewTaskState extends TaskEvent {}
+class ResetNewTaskTypeEvent extends TaskEvent {}
 
-class ClearBloc extends TaskEvent {}
+class ClearBlocEvent extends TaskEvent {}
+
+class ChangeTaskFilterEvent extends TaskEvent {
+  final String typeTaskName;
+  const ChangeTaskFilterEvent(this.typeTaskName);
+}
+
+class ResetFilterEvent extends TaskEvent {}
