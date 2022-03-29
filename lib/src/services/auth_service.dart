@@ -10,7 +10,7 @@ class AuthService {
   }) async {
     final response = await http.post(Uri.parse('$host/auth/signin'), body: {
       "password": password,
-      "email": email,
+      "email": email.toLowerCase().trim(),
     });
     final responseParsed = loginResponseFromJson(response.body);
     return responseParsed;
