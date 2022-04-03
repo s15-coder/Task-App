@@ -13,7 +13,7 @@ It application has been created using the the state management library [BLoC](ht
 
 To manage the different http requests was used the library [http](https://pub.dev/packages/http/install).
 
-The storage libraries used where [shared_preferences](https://pub.dev/packages/shared_preferences) to store a small amount of data like tokens and theme choice. To store amounts of data bigger like the name, email, etc,  I've used the library [Hive](https://pub.dev/packages/hive), because it has some advantages over [sqflite](https://pub.dev/packages/sqflite) about readibily and complexity,.
+The storage libraries used were [shared_preferences](https://pub.dev/packages/shared_preferences) to store a small amount of data like tokens and theme choice. To store amounts of data bigger like the name, email, etc,  I've used the library [Hive](https://pub.dev/packages/hive), because it has some advantages over [sqflite](https://pub.dev/packages/sqflite) about readibily and complexity,.
 
 
 ### Why another app tasks?
