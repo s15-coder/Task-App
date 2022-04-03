@@ -16,5 +16,5 @@ To manage the different http requests was used the library [http](https://pub.de
 The storage libraries used were [shared_preferences](https://pub.dev/packages/shared_preferences) to store a small amount of data like tokens and theme choice. To store amounts of data bigger like the name, email, etc,  I've used the library [Hive](https://pub.dev/packages/hive), because it has some advantages over [sqflite](https://pub.dev/packages/sqflite) about readibily and complexity,.
 
 
-### Why another app tasks?
+### Why another tasks app?
 I know there are a lot of applications that have the same main idea. However every creation is unique on its own, also I thought it could be a good idea to show my current knowledge on differents areas of the framework Flutter.
