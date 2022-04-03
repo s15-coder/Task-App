@@ -18,8 +18,12 @@ class ValidationsFields {
   }
 
   String? validateFields(List<Field> fields) {
+    String? errorText;
     for (var i = 0; i < fields.length; i++) {
-      return _validateAccordType(fields[i]);
+      errorText = _validateAccordType(fields[i]);
+      if (errorText != null && errorText.isNotEmpty) {
+        return errorText;
+      }
     }
   }
 

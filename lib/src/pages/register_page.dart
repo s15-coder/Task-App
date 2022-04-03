@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_app/src/bloc/user_bloc.dart';
 import 'package:task_app/src/helpers/alerts.dart';
+import 'package:task_app/src/helpers/network_validator.dart';
 import 'package:task_app/src/helpers/validations_fields.dart';
 import 'package:task_app/src/pages/login_page.dart';
 import 'package:task_app/src/widgets/container_fields_auth.dart';
@@ -164,6 +165,8 @@ class FormRegister extends StatelessWidget {
         message: errorText,
       );
     }
+    if (!await NewtworkValidator.checkNetworkAndAlert(context)) return;
+
     showLoadingAlert(context);
     final response = await UserBloc().register(
       email: email,
