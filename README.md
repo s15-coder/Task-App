@@ -1,5 +1,5 @@
 
-# Tasks Stack
+# Tasks Stack 📝
 
 It's a [Flutter](https://flutter.dev/) project created to help people to manage their tasks in a better way, and so be more productive and organized.✔️✔️
 
