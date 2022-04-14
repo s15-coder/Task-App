@@ -36,8 +36,7 @@ class LoginPainter extends CustomPainter {
 
   void drawFigureUp(Canvas canvas, Size size) {
     //Draw figure up
-    final pen = Paint();
-    pen.color = Colors.lightGreen;
+    final pen = Paint()..color = Theme.of(context).primaryColor;
 
     final path = Path();
     path.moveTo(0, 0);

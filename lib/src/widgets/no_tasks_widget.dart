@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/theme/custom_color_scheme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NoTasksWidget extends StatelessWidget {
@@ -13,7 +14,7 @@ class NoTasksWidget extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.colorTaskCard,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

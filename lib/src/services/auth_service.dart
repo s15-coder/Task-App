@@ -24,7 +24,7 @@ class AuthService {
     final response = await http.post(Uri.parse('$host/auth/signup'), body: {
       'name': name,
       "password": password,
-      "email": email,
+      "email": email.toLowerCase().trim(),
     });
     final responseParsed = genericResponseFromJson(response.body);
     return responseParsed;
