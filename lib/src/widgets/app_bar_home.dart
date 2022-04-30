@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_app/src/bloc/task/task_bloc.dart';
 import 'package:task_app/src/global/consts.dart';
+import 'package:task_app/src/helpers/parse_data.dart';
 import 'package:task_app/src/pages/profile_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppBarHome extends StatefulWidget implements PreferredSizeWidget {
   const AppBarHome({Key? key})
@@ -38,7 +40,7 @@ class _CustomAppBarState extends State<AppBarHome> {
               onTap: () {
                 taskBloc.add(ResetFilterEvent());
               },
-              value: 'All',
+              value: AppLocalizations.of(context)!.all_tasks,
               child: Row(
                 children: [
                   Container(
@@ -47,9 +49,9 @@ class _CustomAppBarState extends State<AppBarHome> {
                     color: Colors.grey,
                   ),
                   const SizedBox(width: 10),
-                  const Text(
-                    'All',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.all_tasks,
+                    style: const TextStyle(
                       fontSize: 14,
                     ),
                   ),
@@ -72,7 +74,8 @@ class _CustomAppBarState extends State<AppBarHome> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            taskState.nameState,
+                            ParseData()
+                                .stateToText(taskState.nameState, context),
                             style: const TextStyle(
                               fontSize: 14,
                             ),
@@ -87,8 +90,8 @@ class _CustomAppBarState extends State<AppBarHome> {
       title: BlocBuilder<TaskBloc, TaskState>(
         builder: (context, state) {
           return Text(state.typeTaskFilter.isNotEmpty
-              ? state.typeTaskFilter
-              : 'All Tasks');
+              ? ParseData().stateToText(state.typeTaskFilter, context)
+              : AppLocalizations.of(context)!.all_tasks);
         },
       ),
       centerTitle: true,

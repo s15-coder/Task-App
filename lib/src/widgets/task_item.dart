@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_app/src/helpers/parse_data.dart';
 import 'package:task_app/src/models/task.dart';
 import 'package:task_app/src/pages/detail_task_page.dart';
 import 'package:task_app/src/theme/custom_color_scheme.dart';
@@ -80,7 +81,7 @@ class TaskItem extends StatelessWidget {
                   color: task.state.colorState,
                 ),
                 const SizedBox(width: 15),
-                Text(task.state.nameState)
+                Text(ParseData().stateToText(task.state.nameState, context))
               ],
             )
           ],

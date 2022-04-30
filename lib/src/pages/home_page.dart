@@ -74,7 +74,6 @@ class TasksList extends StatelessWidget {
         }
         return SingleChildScrollView(
           child: SizedBox(
-            height: size.height,
             child: Column(
               children: [
                 const SizedBox(height: 20),

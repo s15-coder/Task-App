@@ -16,23 +16,34 @@ class SaveTaskResponse {
   SaveTaskResponse({
     required this.ok,
     required this.msg,
-    this.createdTask,
+    required this.tasks,
   });
 
-  bool ok;
-  String msg;
-  Task? createdTask;
+  final bool ok;
+  final String msg;
+  final List<Task> tasks;
+
+  SaveTaskResponse copyWith({
+    bool? ok,
+    String? msg,
+    List<Task>? tasks,
+  }) =>
+      SaveTaskResponse(
+        ok: ok ?? this.ok,
+        msg: msg ?? this.msg,
+        tasks: tasks ?? this.tasks,
+      );
 
   factory SaveTaskResponse.fromJson(Map<String, dynamic> json) =>
       SaveTaskResponse(
         ok: json["ok"],
         msg: json["msg"],
-        createdTask: Task.fromJson(json["created_task"]),
+        tasks: List<Task>.from(json["tasks"].map((x) => Task.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "ok": ok,
         "msg": msg,
-        "created_task": createdTask!.toJson(),
+        "tasks": List<dynamic>.from(tasks.map((x) => x.toJson())),
       };
 }

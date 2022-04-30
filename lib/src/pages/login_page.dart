@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:task_app/src/bloc/user_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:task_app/src/bloc/user/user_bloc.dart';
 import 'package:task_app/src/helpers/alerts.dart';
 import 'package:task_app/src/helpers/network_validator.dart';
 import 'package:task_app/src/helpers/validations_fields.dart';
-import 'package:task_app/src/pages/home_page.dart';
 import 'package:task_app/src/pages/register_page.dart';
 import 'package:task_app/src/widgets/container_fields_auth.dart';
 import 'package:task_app/src/widgets/auth_text_field.dart';
 import 'package:task_app/src/widgets/left_banner.dart';
 import 'package:task_app/src/widgets/painters/login_painter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:task_app/src/widgets/right_banner.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -35,12 +38,26 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               Positioned(
+                right: 0,
+                top: size.height * 0.15,
+                child: RightBanner(
+                  color: Colors.red,
+                  prefixBanner: const Icon(
+                    FontAwesomeIcons.google,
+                    color: Colors.white,
+                  ),
+                  onTap: () => {},
+                ),
+              ),
+              Positioned(
                 left: 0,
                 bottom: size.height * 0.15,
                 child: LeftBanner(
-                  label: 'Regiser',
+                  label: AppLocalizations.of(context)!.sign_up,
                   onTap: () => Navigator.pushReplacementNamed(
-                      context, RegisterPage.routeName),
+                    context,
+                    RegisterPage.routeName,
+                  ),
                 ),
               ),
               FormLogin(
@@ -77,9 +94,9 @@ class FormLogin extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Login',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.sign_in,
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w600,
             ),
@@ -102,7 +119,7 @@ class FormLogin extends StatelessWidget {
               AuthTextField(
                 obscureText: true,
                 controller: ctrlPassword,
-                hintText: 'Password',
+                hintText: AppLocalizations.of(context)!.password,
                 prefixIcon: Icons.lock,
                 focusNode: focusPassword,
                 onSubmitted: (_) => onSubmitLogin(context),
@@ -116,7 +133,7 @@ class FormLogin extends StatelessWidget {
             padding: EdgeInsets.only(right: size.width * .1),
             width: size.width,
             child: Text(
-              'Forgot Password?',
+              AppLocalizations.of(context)!.forgot_password,
               textAlign: TextAlign.end,
               style: TextStyle(fontSize: 18, color: Colors.grey.withOpacity(1)),
             ),
@@ -131,35 +148,31 @@ class FormLogin extends StatelessWidget {
     String password = ctrlPassword.value.text;
     //Validate fields
     String? errorText = ValidationsFields().validateFields([
-      Field(typeField: TypeField.email, value: email, fieldName: 'email'),
       Field(
-          typeField: TypeField.password,
-          value: password,
-          fieldName: 'password'),
+        typeField: TypeField.email,
+        value: email,
+        fieldName: AppLocalizations.of(context)!.email,
+      ),
+      Field(
+        typeField: TypeField.password,
+        value: password,
+        fieldName: AppLocalizations.of(context)!.password,
+      ),
     ]);
     if (errorText != null) {
       return showMessageAlert(
         context: context,
-        title: 'Verify',
+        title: 'Versify',
         message: errorText,
       );
     }
     if (!await NewtworkValidator.checkNetworkAndAlert(context)) return;
 
-    showLoadingAlert(context);
-    final response = await UserBloc().login(
+    final userBloc = BlocProvider.of<UserBloc>(context);
+    await userBloc.login(
+      context: context,
       email: email,
       password: password,
     );
-    Navigator.pop(context);
-    if (!response.ok) {
-      return showMessageAlert(
-        context: context,
-        title: 'Failure',
-        message: response.msg,
-      );
-    } else {
-      Navigator.pushReplacementNamed(context, HomePage.routeName);
-    }
   }
 }

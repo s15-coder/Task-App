@@ -5,12 +5,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:task_app/src/bloc/task/task_bloc.dart';
 import 'package:task_app/src/global/consts.dart';
 import 'package:task_app/src/helpers/alerts.dart';
+import 'package:task_app/src/helpers/parse_data.dart';
 import 'package:task_app/src/helpers/validations_fields.dart';
 import 'package:task_app/src/models/task.dart';
 import 'package:task_app/src/models/task_type.dart';
-import 'package:task_app/src/pages/home_page.dart';
 import 'package:task_app/src/widgets/card_container.dart';
 import 'package:task_app/src/widgets/custom_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewTaskPage extends StatefulWidget {
   const NewTaskPage({Key? key}) : super(key: key);
@@ -54,7 +55,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Task'),
+        title: Text(AppLocalizations.of(context)!.new_task),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -65,20 +66,24 @@ class _NewTaskPageState extends State<NewTaskPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CustomTextField(
-                  hintText: 'Task\'s name',
+                  hintText: AppLocalizations.of(context)!.task_name,
                   textCapitalization: TextCapitalization.sentences,
                   prefixIcon: Icons.check_circle_outline,
                   controller: ctrlNameTask,
                   onSubmitted: (v) => focusNodeDesc.requestFocus(),
                   validator: (value) {
                     return ValidationsFields().validateFields([
-                      Field(value: value, fieldName: 'Task name', minLenght: 4),
+                      Field(
+                        value: value,
+                        fieldName: AppLocalizations.of(context)!.task_name,
+                        minLenght: 4,
+                      ),
                     ]);
                   },
                 ),
                 const Divider(),
                 CustomTextField(
-                  hintText: 'Task\'s description',
+                  hintText: AppLocalizations.of(context)!.task_description,
                   prefixIcon: FontAwesomeIcons.tasks,
                   controller: ctrlDescriptionTask,
                   focusNode: focusNodeDesc,
@@ -87,7 +92,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     return ValidationsFields().validateFields([
                       Field(
                         value: value,
-                        fieldName: 'Task Description',
+                        fieldName:
+                            AppLocalizations.of(context)!.task_description,
                         minLenght: 4,
                       ),
                     ]);
@@ -97,7 +103,9 @@ class _NewTaskPageState extends State<NewTaskPage> {
                 const _CustomDropDownBottom(),
                 const Divider(),
                 SaveUpdateButton(
-                  label: edit ? "Edit" : "Save",
+                  label: edit
+                      ? AppLocalizations.of(context)!.edit
+                      : AppLocalizations.of(context)!.save,
                   onPressed: () async {
                     //Validate text fields.
                     final validFields = _formKey.currentState!.validate();
@@ -108,7 +116,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       return showMessageAlert(
                         context: context,
                         title: 'Verify',
-                        message: 'Select the state of the task',
+                        message:
+                            AppLocalizations.of(context)!.select_task_state,
                       );
                     }
 
@@ -134,54 +143,12 @@ class _NewTaskPageState extends State<NewTaskPage> {
     );
   }
 
-  Future onSave(Task newTask) async {
-    showLoadingAlert(context);
-    final response = await taskBloc.saveTask(newTask);
-    Navigator.pop(context);
-    if (response.ok) {
-      return showMessageAlert(
-          context: context,
-          title: 'Success',
-          message: response.msg,
-          closeOnBackArrow: false,
-          onOk: () {
-            //Close alert
-            Navigator.pop(context);
-            //Close page
-            Navigator.pop(context);
-          });
-    }
-    return showMessageAlert(
-      context: context,
-      title: 'Error',
-      message: response.msg,
-    );
-  }
+  Future onSave(Task newTask) async =>
+      await taskBloc.saveTask(newTask, context);
 
   Future onEdit(Task task) async {
     task.id = taskBloc.editTask!.id;
-    showLoadingAlert(context);
-    final response = await taskBloc.updateTask(task);
-    Navigator.pop(context);
-    if (response.ok) {
-      return showMessageAlert(
-          context: context,
-          title: 'Success',
-          message: response.msg,
-          closeOnBackArrow: false,
-          onOk: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              HomePage.routeName,
-              (route) => false,
-            );
-          });
-    }
-    return showMessageAlert(
-      context: context,
-      title: 'Error',
-      message: response.msg,
-    );
+    await taskBloc.updateTask(task, context);
   }
 }
 
@@ -213,9 +180,9 @@ class _CustomDropDownBottom extends StatelessWidget {
             color: Colors.grey,
           ),
           const SizedBox(width: 10),
-          const Text(
-            'Select the task\'s state',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.select_task_state,
+            style: const TextStyle(
               fontSize: 14,
             ),
           ),
@@ -243,7 +210,10 @@ class _CustomDropDownBottom extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      taskState.nameState,
+                      ParseData().stateToText(
+                        taskState.nameState,
+                        context,
+                      ),
                       style: const TextStyle(
                         fontSize: 14,
                       ),
@@ -257,7 +227,7 @@ class _CustomDropDownBottom extends StatelessWidget {
         final taskBloc = BlocProvider.of<TaskBloc>(context);
         return taskBloc.add(
           UpdateNewTaskTypeEvent(
-            value as TaskType,
+            value,
           ),
         );
       },

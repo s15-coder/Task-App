@@ -6,6 +6,7 @@ import 'package:task_app/src/models/task.dart';
 import 'package:task_app/src/pages/new_task_page.dart';
 import 'package:task_app/src/pages/stadium_button.dart';
 import 'package:task_app/src/widgets/card_container.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DetailTaskPage extends StatelessWidget {
   const DetailTaskPage({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class DetailTaskPage extends StatelessWidget {
     final task = ModalRoute.of(context)!.settings.arguments as Task;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Detail'),
+        title: Text(AppLocalizations.of(context)!.task_resume),
         centerTitle: true,
       ),
       body: Column(
@@ -66,7 +67,7 @@ class DetailTaskPage extends StatelessWidget {
               taskBloc.editTask = task;
               Navigator.pushNamed(context, NewTaskPage.routeName);
             },
-            text: "Edit",
+            text: AppLocalizations.of(context)!.edit,
           ),
           const SizedBox(
             height: 10,
@@ -75,35 +76,14 @@ class DetailTaskPage extends StatelessWidget {
             onPressed: () async {
               bool? delete = await confirmAlert(
                 context: context,
-                title: "Delete",
-                message: "Do you want delete this task forever?",
+                title: AppLocalizations.of(context)!.delete,
+                message: AppLocalizations.of(context)!.delete_task_forever,
               );
               if (delete ?? false) {
-                showLoadingAlert(context);
-                final response = await taskBloc.deleteTask(task.id);
-                Navigator.pop(context);
-                if (response.ok) {
-                  return showMessageAlert(
-                    closeOnBackArrow: false,
-                    context: context,
-                    title: 'Success',
-                    message: 'Task deleted successfully.',
-                    onOk: () {
-                      //Close alert
-                      Navigator.pop(context);
-                      //Cloase detail
-                      Navigator.pop(context);
-                    },
-                  );
-                }
-                return showMessageAlert(
-                  context: context,
-                  title: 'Problem',
-                  message: response.msg,
-                );
+                await taskBloc.deleteTask(task.id, context);
               }
             },
-            text: "Delete",
+            text: AppLocalizations.of(context)!.delete,
           ),
         ],
       ),

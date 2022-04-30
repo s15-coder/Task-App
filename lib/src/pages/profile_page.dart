@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:task_app/src/bloc/task/task_bloc.dart';
 import 'package:task_app/src/bloc/theme/theme_bloc.dart';
-import 'package:task_app/src/bloc/user_bloc.dart';
+import 'package:task_app/src/bloc/user/user_bloc.dart';
 import 'package:task_app/src/models/user_hive.dart';
-import 'package:task_app/src/pages/login_page.dart';
 import 'package:task_app/src/resources/db_hive.dart';
 import 'package:task_app/src/widgets/card_container.dart';
 import 'package:task_app/src/widgets/right_banner.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -18,19 +18,8 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      // floatingActionButton: Tooltip(
-      //   message: "Log Out",
-      //   child: FloatingActionButton(
-      //     onPressed: () async {
-      //       final taskBloc = BlocProvider.of<TaskBloc>(context);
-      //       await UserBloc().logOut(taskBloc);
-      //       Navigator.pushReplacementNamed(context, LoginPage.routeName);
-      //     },
-      //     child: const Icon(Icons.logout),
-      //   ),
-      // ),
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(AppLocalizations.of(context)!.profile),
         centerTitle: true,
       ),
       body: SizedBox(
@@ -52,7 +41,9 @@ class ProfilePage extends StatelessWidget {
                       ),
                       margin: const EdgeInsets.only(right: 6),
                     ),
-                    label: state.themeMode == ThemeMode.dark ? 'Light' : 'dark',
+                    label: state.themeMode == ThemeMode.dark
+                        ? AppLocalizations.of(context)!.light
+                        : AppLocalizations.of(context)!.dark,
                     onTap: () => BlocProvider.of<ThemeBloc>(context)
                         .toogleTheme(context),
                   );
@@ -63,11 +54,11 @@ class ProfilePage extends StatelessWidget {
               bottom: size.height * 0.15,
               right: 0,
               child: RightBanner(
-                label: 'Sign Off',
+                label: AppLocalizations.of(context)!.sign_off,
                 onTap: () async {
                   final taskBloc = BlocProvider.of<TaskBloc>(context);
-                  await UserBloc().logOut(taskBloc);
-                  Navigator.pushReplacementNamed(context, LoginPage.routeName);
+                  final userBloc = BlocProvider.of<UserBloc>(context);
+                  await userBloc.logOut(taskBloc, context);
                 },
               ),
             ),
@@ -102,12 +93,12 @@ class ProfileInfo extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       _ProfileProperty(
-                        keyString: 'Name',
+                        keyString: AppLocalizations.of(context)!.name,
                         value: user.name,
                       ),
                       const Divider(),
                       _ProfileProperty(
-                        keyString: 'Email',
+                        keyString: AppLocalizations.of(context)!.email,
                         value: user.email,
                       ),
                     ],
@@ -174,9 +165,10 @@ class _ProfileProperty extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 3,
+            flex: 1,
             child: Text(
               value,
+              maxLines: 3,
               style: const TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future showLoadingAlert(BuildContext context) async {
   showDialog(
     barrierDismissible: false,
     context: context,
     builder: (_) => WillPopScope(
-      child: const AlertDialog(
-        title: Text('Loading...'),
-        content: LinearProgressIndicator(),
+      child: AlertDialog(
+        title: Text(AppLocalizations.of(context)!.loading),
+        content: const LinearProgressIndicator(),
       ),
       onWillPop: () async => false,
     ),
@@ -31,9 +32,9 @@ Future showMessageAlert({
           actions: [
             TextButton(
                 onPressed: () => onOk != null ? onOk() : Navigator.pop(context),
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: Colors.black),
+                child: Text(
+                  AppLocalizations.of(context)!.ok,
+                  style: const TextStyle(color: Colors.black),
                 ))
           ],
         ),
@@ -62,21 +63,12 @@ Future<bool?> confirmAlert({
               TextButton(
                   onPressed: () =>
                       onOk != null ? onOk() : Navigator.pop(context, false),
-                  child: Text(
-                    cancelText ?? 'Cancel',
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  )),
+                  child:
+                      Text(cancelText ?? AppLocalizations.of(context)!.cancel)),
               TextButton(
                   onPressed: () =>
                       onOk != null ? onOk() : Navigator.pop(context, true),
-                  child: Text(
-                    okText ?? 'OK',
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  )),
+                  child: Text(okText ?? AppLocalizations.of(context)!.ok)),
             ],
           ),
           onWillPop: () async {

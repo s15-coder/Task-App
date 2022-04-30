@@ -1,10 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:task_app/src/models/responses/generic_response.dart';
-import 'package:task_app/src/models/responses/save_task_response.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:task_app/src/helpers/alerts.dart';
 import 'package:task_app/src/models/task.dart';
 import 'package:task_app/src/models/task_type.dart';
+import 'package:task_app/src/pages/home_page.dart';
 import 'package:task_app/src/services/task_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
@@ -14,7 +16,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Task? editTask;
   final TaskService _taskService = TaskService();
   TaskBloc() : super(const TaskState()) {
-    on<AddTasksEvent>(
+    on<UpdateTasksEvent>(
       (event, emit) => emit(state.copyWith(tasks: event.tasks)),
     );
     on<StartFetchingTasksEvent>(
@@ -45,37 +47,96 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     add(StartFetchingTasksEvent());
     final getTasksResponse = await _taskService.getTasks();
     if (getTasksResponse.ok) {
-      add(AddTasksEvent(getTasksResponse.tasks));
+      add(UpdateTasksEvent(getTasksResponse.tasks));
     }
     add(StopFetchingTasksEvent());
   }
 
-  Future<GenericResponse> updateTask(Task task) async {
-    add(const AddTasksEvent([]));
-    return await _taskService.updateTask(task);
+  Future updateTask(Task task, BuildContext context) async {
+    showLoadingAlert(context);
+    final response = await _taskService.updateTask(task);
+    Navigator.pop(context);
+
+    if (response.ok) {
+      add(UpdateTasksEvent(response.tasks));
+
+      return showMessageAlert(
+          context: context,
+          title: AppLocalizations.of(context)!.success,
+          message: AppLocalizations.of(context)!.task_updated_succesfully,
+          closeOnBackArrow: false,
+          onOk: () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              HomePage.routeName,
+              (route) => false,
+            );
+          });
+    }
+    return showMessageAlert(
+      context: context,
+      title: 'Error',
+      message: response.msg,
+    );
   }
 
-  Future<GenericResponse> deleteTask(String taskId) async {
+  Future deleteTask(String taskId, BuildContext context) async {
+    showLoadingAlert(context);
+
     final response = await _taskService.deleteTask(taskId);
     if (response.ok) {
-      final updatedTasks = [
-        ...state.tasks.where((task) => task.id != taskId),
-      ];
-      add(AddTasksEvent(updatedTasks));
+      add(UpdateTasksEvent(response.tasks));
     }
-    return response;
+
+    Navigator.pop(context);
+    if (response.ok) {
+      return showMessageAlert(
+        closeOnBackArrow: false,
+        context: context,
+        title: AppLocalizations.of(context)!.success,
+        message: AppLocalizations.of(context)!.task_deleted_succesfully,
+        onOk: () {
+          //Close alert
+          Navigator.pop(context);
+          //Close detail
+          Navigator.pop(context);
+        },
+      );
+    }
+    return showMessageAlert(
+      context: context,
+      title: AppLocalizations.of(context)!.error,
+      message: response.msg,
+    );
   }
 
-  Future<SaveTaskResponse> saveTask(Task newTask) async {
+  Future saveTask(Task newTask, BuildContext context) async {
+    showLoadingAlert(context);
+
     final response = await _taskService.saveTask(newTask);
     if (response.ok) {
-      final tasks = [
-        response.createdTask!,
-        ...state.tasks,
-      ];
-      add(AddTasksEvent(tasks));
+      add(UpdateTasksEvent(response.tasks));
     }
-    return response;
+    Navigator.pop(context);
+
+    if (response.ok) {
+      return showMessageAlert(
+          context: context,
+          title: AppLocalizations.of(context)!.success,
+          message: AppLocalizations.of(context)!.task_created_succesfully,
+          closeOnBackArrow: false,
+          onOk: () {
+            //Close alert
+            Navigator.pop(context);
+            //Close page
+            Navigator.pop(context);
+          });
+    }
+    return showMessageAlert(
+      context: context,
+      title: AppLocalizations.of(context)!.success,
+      message: response.msg,
+    );
   }
 
   ///Clears all data stored in bloc and it's state

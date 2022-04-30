@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:task_app/src/theme/custom_color_scheme.dart';
 
 class LeftBanner extends StatelessWidget {
-  const LeftBanner({Key? key, required this.label, required this.onTap})
-      : super(key: key);
-  final String label;
+  const LeftBanner({
+    Key? key,
+    this.label,
+    required this.onTap,
+    this.prefixBanner,
+    this.color,
+  }) : super(key: key);
+  final String? label;
+  final Widget? prefixBanner;
+  final Color? color;
   final void Function()? onTap;
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,7 @@ class LeftBanner extends StatelessWidget {
             topRight: Radius.circular(30),
             bottomRight: Radius.circular(30),
           ),
-          color: Theme.of(context).colorScheme.colorTaskCard,
+          color: color ?? Theme.of(context).colorScheme.colorTaskCard,
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).shadowColor,
@@ -30,14 +37,20 @@ class LeftBanner extends StatelessWidget {
             ),
           ],
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: 24,
-            color: Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Row(
+          children: [
+            if (prefixBanner != null) prefixBanner!,
+            if (label != null)
+              Text(
+                label!,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+          ],
         ),
       ),
     );

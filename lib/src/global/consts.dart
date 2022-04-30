@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_app/src/models/task_type.dart';
 
 enum Enviroment { development, production }
-const Enviroment enviroment = Enviroment.production;
+const Enviroment enviroment = Enviroment.development;
 String get host => enviroment == Enviroment.development
     ? "http://10.0.2.2:3000"
     : "https://tasks-app-esteban.herokuapp.com";

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:task_app/src/bloc/user_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:task_app/src/bloc/user/user_bloc.dart';
 import 'package:task_app/src/helpers/alerts.dart';
 import 'package:task_app/src/helpers/network_validator.dart';
 import 'package:task_app/src/helpers/validations_fields.dart';
 import 'package:task_app/src/pages/login_page.dart';
 import 'package:task_app/src/widgets/container_fields_auth.dart';
 import 'package:task_app/src/widgets/auth_text_field.dart';
+import 'package:task_app/src/widgets/left_banner.dart';
 import 'package:task_app/src/widgets/painters/login_painter.dart';
 import 'package:task_app/src/widgets/right_banner.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({Key? key}) : super(key: key);
@@ -39,12 +43,26 @@ class RegisterPage extends StatelessWidget {
                 ),
               ),
               Positioned(
+                left: 0,
+                bottom: size.height * 0.15,
+                child: LeftBanner(
+                  prefixBanner: const Icon(
+                    FontAwesomeIcons.google,
+                    color: Colors.white,
+                  ),
+                  color: Colors.red,
+                  onTap: () => {},
+                ),
+              ),
+              Positioned(
                 right: 0,
                 top: size.height * 0.15,
                 child: RightBanner(
-                  label: 'Login',
+                  label: AppLocalizations.of(context)!.sign_in,
                   onTap: () => Navigator.pushReplacementNamed(
-                      context, LoginPage.routeName),
+                    context,
+                    LoginPage.routeName,
+                  ),
                 ),
               ),
               FormRegister(
@@ -87,9 +105,9 @@ class FormRegister extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Register',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.sign_up,
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w600,
             ),
@@ -98,7 +116,7 @@ class FormRegister extends StatelessWidget {
           ContainerFieldsAuth(
             fields: [
               AuthTextField(
-                hintText: 'Name',
+                hintText: AppLocalizations.of(context)!.name,
                 textCapitalization: TextCapitalization.words,
                 controller: ctrlName,
                 prefixIcon: Icons.person_pin_circle_outlined,
@@ -113,7 +131,7 @@ class FormRegister extends StatelessWidget {
                 height: 1,
               ),
               AuthTextField(
-                hintText: 'Email',
+                hintText: AppLocalizations.of(context)!.email,
                 textCapitalization: TextCapitalization.sentences,
                 controller: ctrlEmail,
                 prefixIcon: Icons.email,
@@ -130,7 +148,7 @@ class FormRegister extends StatelessWidget {
               ),
               AuthTextField(
                 obscureText: true,
-                hintText: 'Password',
+                hintText: AppLocalizations.of(context)!.password,
                 controller: ctrlPassword,
                 prefixIcon: Icons.lock,
                 focusNode: passwordFocus,
@@ -151,12 +169,21 @@ class FormRegister extends StatelessWidget {
     String password = ctrlPassword.value.text;
     //Validate fields
     String? errorText = ValidationsFields().validateFields([
-      Field(typeField: TypeField.name, value: name, fieldName: 'name'),
-      Field(typeField: TypeField.email, value: email, fieldName: 'email'),
       Field(
-          typeField: TypeField.password,
-          value: password,
-          fieldName: 'password'),
+        typeField: TypeField.name,
+        value: name,
+        fieldName: AppLocalizations.of(context)!.name,
+      ),
+      Field(
+        typeField: TypeField.email,
+        value: email,
+        fieldName: email,
+      ),
+      Field(
+        typeField: TypeField.password,
+        value: password,
+        fieldName: password,
+      ),
     ]);
     if (errorText != null) {
       return showMessageAlert(
@@ -166,33 +193,12 @@ class FormRegister extends StatelessWidget {
       );
     }
     if (!await NewtworkValidator.checkNetworkAndAlert(context)) return;
-
-    showLoadingAlert(context);
-    final response = await UserBloc().register(
+    final userBloc = BlocProvider.of<UserBloc>(context);
+    await userBloc.register(
       email: email,
       password: password,
       name: name,
+      context: context,
     );
-    Navigator.pop(context);
-
-    if (!response.ok) {
-      return showMessageAlert(
-        context: context,
-        title: 'Failure',
-        message: response.msg,
-      );
-    } else {
-      return showMessageAlert(
-          closeOnBackArrow: false,
-          context: context,
-          title: 'Success',
-          message: "Successfully registered",
-          onOk: () {
-            //Close alert
-            Navigator.pop(context);
-            //Change page
-            Navigator.pushReplacementNamed(context, LoginPage.routeName);
-          });
-    }
   }
 }
