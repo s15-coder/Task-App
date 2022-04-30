@@ -26,7 +26,7 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    final userBloc = BlocProvider.of<UserBloc>(context);
     return Scaffold(
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -51,7 +51,8 @@ class RegisterPage extends StatelessWidget {
                     color: Colors.white,
                   ),
                   color: Colors.red,
-                  onTap: () => {},
+                  onTap: () async =>
+                      await userBloc.googleSignIn(context: context),
                 ),
               ),
               Positioned(

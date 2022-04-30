@@ -21,7 +21,7 @@
     "select_task_state": "Selecciona el estado de la tarea",
     "new_task": "Tarea Nueva",
     "save": "Guardar",
-    "task_created_succesfully": "Tarea creada exitosamente",
+    "task_created_succesfully": "Tarea creada exitosamente.",
     "dark": "Oscuro",
     "light": "Claro",
     "sign_off": "Cerrar Sesión",
@@ -31,6 +31,9 @@
     "task_resume": "Detalle Tarea",
     "delete_task_forever": "¿Estas seguro que quieres eliminar esta tarea?",
     "cancel": "Cancelar",
-    "task_deleted_succesfully": "Tarea eliminada exitosamente",
-    "task_updated_succesfully": "Tarea actualizada exitosamente"
+    "task_deleted_succesfully": "Tarea eliminada exitosamente.",
+    "task_updated_succesfully": "Tarea actualizada exitosamente.",
+    "verify": "Verificar",
+    "wrong_credentials": "Credenciales incorrectas.",
+    "confirm_email": "Confirma tu correo electrónico antes de iniciar sesión."
 }

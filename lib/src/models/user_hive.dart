@@ -7,6 +7,7 @@ class User {
     required this.name,
     required this.email,
     required this.id,
+    this.picture,
   });
 
   @HiveField(0)
@@ -15,16 +16,20 @@ class User {
   String email;
   @HiveField(2)
   String id;
+  @HiveField(3)
+  String? picture;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"],
         email: json["email"],
         id: json["id"],
+        picture: json["picture"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "email": email,
         "id": id,
+        "picture": picture,
       };
 }

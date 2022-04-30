@@ -16,6 +16,16 @@ class AuthService {
     return responseParsed;
   }
 
+  Future<LoginResponse> googleSignIn({
+    required String googleToken,
+  }) async {
+    final response = await http.post(Uri.parse('$host/auth/google'), body: {
+      "google_token": googleToken,
+    });
+    final responseParsed = loginResponseFromJson(response.body);
+    return responseParsed;
+  }
+
   Future<GenericResponse> register({
     required String email,
     required String password,

@@ -120,14 +120,16 @@ class ProfileInfo extends StatelessWidget {
                       color: Theme.of(context).backgroundColor,
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    child: Transform.translate(
-                      offset: const Offset(-15, -10),
-                      child: Icon(
-                        Icons.person,
-                        size: 120,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
+                    child: user.picture != null
+                        ? Image.network(user.picture!)
+                        : Transform.translate(
+                            offset: const Offset(-15, -10),
+                            child: Icon(
+                              Icons.person,
+                              size: 120,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                   ),
                 ),
               ),

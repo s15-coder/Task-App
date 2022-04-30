@@ -22,6 +22,7 @@ class LoginPage extends StatelessWidget {
   final focusPassword = FocusNode();
   @override
   Widget build(BuildContext context) {
+    final userBloc = BlocProvider.of<UserBloc>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
@@ -46,7 +47,8 @@ class LoginPage extends StatelessWidget {
                     FontAwesomeIcons.google,
                     color: Colors.white,
                   ),
-                  onTap: () => {},
+                  onTap: () async =>
+                      await userBloc.googleSignIn(context: context),
                 ),
               ),
               Positioned(

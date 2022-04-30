@@ -32,5 +32,8 @@
     "delete_task_forever": "¿Estas seguro que quieres eliminar esta tarea?",
     "cancel": "Cancelar",
     "task_deleted_succesfully": "Tarea eliminada exitosamente.",
-    "task_updated_succesfully": "Tarea actualizada exitosamente."
+    "task_updated_succesfully": "Tarea actualizada exitosamente.",
+    "verify": "Verificar",
+    "wrong_credentials": "Credenciales incorrectas.",
+    "confirm_email": "Confirma tu correo electrónico antes de iniciar sesión."
 }

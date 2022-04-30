@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1038875052483",
+    "project_id": "tasks-list-330e6",
+    "storage_bucket": "tasks-list-330e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038875052483:android:7a2381679b933cd55a5576",
+        "android_client_info": {
+          "package_name": "com.tasksapp.esteban"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1038875052483-6d7bhi5lvqcgdquspdd4n5qtvl87p5md.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tasksapp.esteban",
+            "certificate_hash": "5205c89f8872c25d0dbf24291b459b650d1473ad"
+          }
+        },
+        {
+          "client_id": "1038875052483-8st5cscs8c1302j96rfa1qpve20free8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOsVafP_JgdEo4D-Oj1BYTC1E8GO0RFZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1038875052483-8st5cscs8c1302j96rfa1qpve20free8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

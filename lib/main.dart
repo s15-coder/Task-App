@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_app/src/bloc/task/task_bloc.dart';
 import 'package:task_app/src/bloc/theme/theme_bloc.dart';
 import 'package:task_app/src/bloc/user/user_bloc.dart';
-import 'package:task_app/src/pages/splash_screen.dart';
+import 'package:task_app/src/pages/home_page.dart';
+import 'package:task_app/src/pages/login_page.dart';
 import 'package:task_app/src/resources/db_hive.dart';
 import 'package:task_app/src/resources/preferences.dart';
 import 'package:task_app/src/routes/routes.dart';
@@ -57,7 +58,8 @@ class _MyApp extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
       routes: routes,
-      initialRoute: SplashScreen.routeName,
+      initialRoute:
+          HiveDB().getUser() != null ? HomePage.routeName : LoginPage.routeName,
       themeMode: themeMode,
       darkTheme: darkTheme,
       theme: lightTheme,
