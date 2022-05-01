@@ -6,6 +6,8 @@ ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.green,
   textTheme: lightTextTheme,
+  textButtonTheme:
+      TextButtonThemeData(style: TextButton.styleFrom(primary: Colors.black)),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       backgroundColor: MaterialStateProperty.all(Colors.green),

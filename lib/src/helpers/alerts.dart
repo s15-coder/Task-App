@@ -34,7 +34,6 @@ Future showMessageAlert({
                 onPressed: () => onOk != null ? onOk() : Navigator.pop(context),
                 child: Text(
                   AppLocalizations.of(context)!.ok,
-                  style: const TextStyle(color: Colors.black),
                 ))
           ],
         ),

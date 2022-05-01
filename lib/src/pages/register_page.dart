@@ -189,7 +189,7 @@ class FormRegister extends StatelessWidget {
     if (errorText != null) {
       return showMessageAlert(
         context: context,
-        title: 'Verify',
+        title: AppLocalizations.of(context)!.verify,
         message: errorText,
       );
     }

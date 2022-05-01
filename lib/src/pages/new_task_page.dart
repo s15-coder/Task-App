@@ -115,7 +115,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     if (taskBloc.taskState == null) {
                       return showMessageAlert(
                         context: context,
-                        title: 'Verify',
+                        title: AppLocalizations.of(context)!.verify,
                         message:
                             AppLocalizations.of(context)!.select_task_state,
                       );

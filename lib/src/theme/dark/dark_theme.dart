@@ -10,6 +10,8 @@ ThemeData darkTheme = ThemeData(
   iconTheme: const IconThemeData(
     color: Colors.green,
   ),
+  textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(primary: Colors.grey[200])),
   primaryIconTheme: const IconThemeData(
     color: Colors.green,
   ),
