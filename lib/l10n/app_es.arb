@@ -13,7 +13,7 @@
     "doing": "Haciendo",
     "done": "Hecho",
     "error": "Error",
-    "email_already_registered": "Este correo electrónico ya esta en uso",
+    "email_already_registered": "Este correo electrónico ya esta en uso.",
     "all_tasks": "Todas las Tareas",
     "create_new_tasks": "Crear nuevas tareas",
     "task_name": "Nombre de la tarea",
